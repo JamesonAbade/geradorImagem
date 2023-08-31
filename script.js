@@ -7,7 +7,7 @@ let selectedImageNumber = null;
 //função para gerar um número aleatório entre mínimo e máximo
 
 function getRandomNumber(min, max){
-    return Math.random(Math.random() * (max - min + 1)) + min;
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 //função para desativar o botão gerar durante o processamento
@@ -24,66 +24,61 @@ function enableGenerateButton(){
 
 // Função para limpar a imagem da grade
 
-function cleanImageGrid(){
+function clearImageGrid() {
     const imageGrid = document.getElementById("image-grid");
     imageGrid.innerHTML = "";
 }
+}
 //função para gerar imagens
 
-async function generateImages(input){
+async function generateImages(input) {
     disableGenerateButton();
-    cleanImageGrid();
+    clearImageGrid();
 
     const loading = document.getElementById("loading");
     loading.style.display = "block";
 
     const imageUrls = [];
-    for(let i = 0; i < maxImages; i++){
+    for (let i = 0; i < maxImages; i++) {
         // Gera um número aleatório entre 1 e 100 e anexe-o ao campo de busca
 
-        const getRandomNumber = getRandomNumber(1, 100);
-        const promt = `${input}${randomNumber}`;
+        const randomNumber = getRandomNumber(1, 10000);
+        const prompt = `${input} ${randomNumber}`;
         // Adicionamos um número aleatório ao prompt para criar resultados diferentes
         const response = await fetch(
-        "https://api-inference.huggingface.co/models/",
+        "https://api-inference.huggingface.co/models/prompthero/openjourney",
             {
-            method:"POST",
-            headers:{
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${apiKey}`,
-
-            },
-            body: JSON.stringify({ inputs: promt}),
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${apiKey}`,
+                },
+                body: JSON.stringify({ inputs: prompt }),
             }
         );
-
-        if(!response.ok){
-            alert("Falha ao gerar imagem!");
-        }
     
         const blob = await response.blob();
-        const imageUrl = URL.createObjectURL(blob);
-        imageUrl.push(imgUrl);
+        const imgUrl = URL.createObjectURL(blob);
+        imageUrls.push(imgUrl);
     
-        const im = document.createElement("img");
+        const img = document.createElement("img");
         img.src = imgUrl;
         img.alt = `art-${i + 1}`;
         img.onclick = () => downloadImage(imgUrl, i);
         document.getElementById("image-grid").appendChild(img);
-
-    };
+    }
 
     loading.style.display = "none";
     enableGenerateButton();
 
-    selectedImageNumber = null; //Reinicia a image selecionada
-    
+    selectedImageNumber = null; // Reset selected image number
 }
 
-document.getElementById("generate").addEventListener(`click`, () =>{
-    const input = document.getElementById("promt").ariaValueMax;
+
+document.getElementById("generate").addEventListener('click', () => {
+    const input = document.getElementById("user-prompt").value;
     generateImages(input);
-})
+});
 
 function downloadImage(imgUrl, imageNumber) {
     const link = document.createElement("a");
