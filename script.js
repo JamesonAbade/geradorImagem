@@ -12,14 +12,14 @@ function getRandomNumber(min, max){
 
 //função para desativar o botão gerar durante o processamento
 
-function disableGenerateButton(){
-    document.getElementById(generate).disable = true;
+function disableGenerateButton() {
+    document.getElementById("generate").disabled = true;
 }
 
 //função para desativar o botão gerar depois do processo
 
-function enableGenerateButton(){
-    document.getElementById(generate).disable = false;
+function enableGenerateButton() {
+    document.getElementById("generate").disabled = false;
 }
 
 // Função para limpar a imagem da grade
@@ -28,7 +28,7 @@ function clearImageGrid() {
     const imageGrid = document.getElementById("image-grid");
     imageGrid.innerHTML = "";
 }
-}
+
 //função para gerar imagens
 
 async function generateImages(input) {
@@ -40,7 +40,7 @@ async function generateImages(input) {
 
     const imageUrls = [];
     for (let i = 0; i < maxImages; i++) {
-        // Gera um número aleatório entre 1 e 100 e anexe-o ao campo de busca
+        // Gera um número aleatório entre 1 e 10000 e anexe-o ao campo de busca
 
         const randomNumber = getRandomNumber(1, 10000);
         const prompt = `${input} ${randomNumber}`;
